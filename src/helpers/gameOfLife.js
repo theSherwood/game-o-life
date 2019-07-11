@@ -1,4 +1,4 @@
-const timeStep = board => {
+export const timeStep = board => {
   const newBoard = board.map((row, i) =>
     row.map((cell, j) => checkCell(i, j, board))
   );
