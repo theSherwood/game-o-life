@@ -1,17 +1,32 @@
 <script>
+  import {timeStep} from '../helpers/gameOfLife';
+
   export let x = 100;
   export let y = 100;
   export let cellSize = 8;
+  export let stepSize = 100;
 
   let board = new Array(y).fill(0)
   board = board.map(val => {
     return new Array(x).fill(0)
   })
 
-  function handleClick(i, j) {
-    board[i][j] = board[i][j] === 0 ? 1 : 0;
-    board = board;
+  let intervalId;
+  function run() {
+    intervalId = setInterval(() => {
+      board = timeStep(board);
+    }, stepSize)
   }
+
+  function pause() {
+    clearInterval(intervalId);
+  }
+
+  function handleClick(i, j) {
+      board[i][j] = board[i][j] === 0 ? 1 : 0;
+      board = board;
+    }
+
 </script>
 
 <section class="game-container">
@@ -23,8 +38,8 @@
     </div>
   {/each}
 </section>
-<button>Run</button>
-<button>Pause</button>
+<button on:click={run}>Run</button>
+<button on:click={pause}>Pause</button>
 
 <style>
   .game-container :global(*) {
@@ -44,7 +59,7 @@
 
   .cell {
     background: #333;
-    border: solid 1px black;
+    /* border: solid 1px black; */
     display: inline-block;
   }
 
