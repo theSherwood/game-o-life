@@ -1,12 +1,13 @@
 <script>
   import {timeStep, randomSeed} from '../helpers/gameOfLife';
 
-  let x = 100;
-  let y = 100;
+  let x = 160;
+  let y = 160;
   let cellSize = 8;
   let stepSize = 500;
   let intervalId;
   let board;
+  let paused = true;
   let gliders = false;
 
   emptyBoard()
@@ -19,12 +20,14 @@
   }
   
   function run() {
+    paused = false;
     intervalId = setInterval(() => {
       board = timeStep(board);
     }, stepSize)
   }
 
   function pause() {
+    paused = true;
     clearInterval(intervalId);
   }
 
@@ -58,14 +61,14 @@
   }
 
   function bigger() {
-    x = x < 400 ? x + 10 : x;
-    y = y < 400 ? y + 10 : y;
+    x = x < 220 ? x + 10 : x;
+    y = y < 220 ? y + 10 : y;
     emptyBoard();
   }
 
   function smaller() {
-    x = x > 10 ? x - 10 : x;
-    y = y > 10 ? y - 10 : y;
+    x = x > 70 ? x - 10 : x;
+    y = y > 70 ? y - 10 : y;
     emptyBoard();
   }
 
@@ -88,23 +91,27 @@
 
 <section class="game-container">
   <section class="controls">
-    <button on:click={run}>Run</button>
-    <button on:click={pause}>Pause</button>
+    <button on:click={run} class:disabled={!paused}>Run</button>
+    <button on:click={pause} class:disabled={paused}>Pause</button>
+    <button on:click={emptyBoard}>Clear</button>
     <button on:click={seed}>Seed</button>
     <button on:click={faster} class:disabled={stepSize <= 50}>Faster</button>
     <button on:click={slower} class:disabled={stepSize >= 1000}>Slower</button>
-    <button on:click={emptyBoard}>Clear</button>
-    <button on:click={bigger} class:disabled={x >= 400}>Bigger</button>
-    <button on:click={smaller} class:disabled={x <= 10}>Smaller</button>
+    <button on:click={bigger} class:disabled={x >= 220}>Bigger</button>
+    <button on:click={smaller} class:disabled={x <= 70}>Smaller</button>
     <button on:click={toggleGliders} class:disabled={gliders}>Gliders</button>
   </section>
   <section class="board-container">
     {#each board as row, i}
-      <div class="row" style={`height: ${cellSize}px;`}>
-        {#each row as cell, j}
-          <div class="cell" class:active="{cell === 1}" style={`width: ${cellSize}px; height: ${cellSize}px;`} on:click="{() => handleClick(i, j)}"></div>
-        {/each}
-      </div>
+      {#if (i>29 && i<board.length - 30)}
+        <div class="row" style={`height: ${cellSize}px;`}>
+          {#each row as cell, j}
+            {#if (j>29 && j<board[0].length - 30)}
+              <div class="cell" class:active="{cell === 1}" style={`width: ${cellSize}px; height: ${cellSize}px;`} on:click="{() => handleClick(i, j)}"></div>
+            {/if}
+          {/each}
+        </div>
+      {/if}
     {/each}
   </section>
 </section>
