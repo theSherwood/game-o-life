@@ -20,23 +20,23 @@ const countLiveNeighbors = (i, j, board) => {
     if (j > 0) {
       count += board[i - 1][j - 1];
     }
-    if (j < board[0].length - 2) {
+    if (j < board[0].length - 1) {
       count += board[i - 1][j + 1];
     }
   }
-  if (i < board.length - 2) {
+  if (i < board.length - 1) {
     count += board[i + 1][j];
     if (j > 0) {
       count += board[i + 1][j - 1];
     }
-    if (j < board[0].length - 2) {
+    if (j < board[0].length - 1) {
       count += board[i + 1][j + 1];
     }
   }
   if (j > 0) {
     count += board[i][j - 1];
   }
-  if (j < board[0].length - 2) {
+  if (j < board[0].length - 1) {
     count += board[i][j + 1];
   }
   return count;
