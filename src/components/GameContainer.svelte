@@ -6,12 +6,14 @@
   let cellSize = 8;
   let stepSize = 500;
   let intervalId;
-  let board = new Array(y).fill(0)
+  let board;
+  let gliders = false;
 
   emptyBoard()
 
   function emptyBoard() {
-    board = board.map(val => {
+    const newBoard = new Array(y).fill(0);
+    board = newBoard.map(val => {
       return new Array(x).fill(0)
     })
   }
@@ -27,7 +29,11 @@
   }
 
   function handleClick(i, j) {
-    board[i][j] = board[i][j] === 0 ? 1 : 0;
+    if (gliders) {
+      makeGlider(i, j)
+    } else {
+      board[i][j] = board[i][j] === 0 ? 1 : 0;
+    }
     board = board;
   }
 
@@ -51,23 +57,57 @@
     }
   }
 
+  function bigger() {
+    x = x < 400 ? x + 10 : x;
+    y = y < 400 ? y + 10 : y;
+    emptyBoard();
+  }
+
+  function smaller() {
+    x = x > 10 ? x - 10 : x;
+    y = y > 10 ? y - 10 : y;
+    emptyBoard();
+  }
+
+  function toggleGliders() {
+    gliders = !gliders;
+  }
+
+  function makeGlider(i, j) {
+    try {
+      board[i][j] = 1;
+      board[i][j-1] = 1;
+      board[i][j-2] = 1;
+      board[i-1][j] = 1;
+      board[i-2][j-1] = 1;
+    } catch (err) {
+      board[i][j] = board[i][j] === 0 ? 1 : 0;
+    }
+  }
 </script>
 
 <section class="game-container">
-  {#each board as row, i}
-    <div class="row" style={`height: ${cellSize}px;`}>
-      {#each row as cell, j}
-        <div class="cell" class:active="{cell === 1}" style={`width: ${cellSize}px; height: ${cellSize}px;`} on:click="{() => handleClick(i, j)}"></div>
-      {/each}
-    </div>
-  {/each}
+  <section class="controls">
+    <button on:click={run}>Run</button>
+    <button on:click={pause}>Pause</button>
+    <button on:click={seed}>Seed</button>
+    <button on:click={faster} class:disabled={stepSize <= 50}>Faster</button>
+    <button on:click={slower} class:disabled={stepSize >= 1000}>Slower</button>
+    <button on:click={emptyBoard}>Clear</button>
+    <button on:click={bigger} class:disabled={x >= 400}>Bigger</button>
+    <button on:click={smaller} class:disabled={x <= 10}>Smaller</button>
+    <button on:click={toggleGliders} class:disabled={gliders}>Gliders</button>
+  </section>
+  <section class="board-container">
+    {#each board as row, i}
+      <div class="row" style={`height: ${cellSize}px;`}>
+        {#each row as cell, j}
+          <div class="cell" class:active="{cell === 1}" style={`width: ${cellSize}px; height: ${cellSize}px;`} on:click="{() => handleClick(i, j)}"></div>
+        {/each}
+      </div>
+    {/each}
+  </section>
 </section>
-<button on:click={run}>Run</button>
-<button on:click={pause}>Pause</button>
-<button on:click={seed}>Seed</button>
-<button on:click={faster}>Faster</button>
-<button on:click={slower}>Slower</button>
-<button on:click={emptyBoard}>Clear</button>
 
 <style>
   .game-container :global(*) {
@@ -75,9 +115,24 @@
   }
 
   .game-container {
-    border: solid 1px black;
+    margin: auto;
+    width: max-content;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+
+  button {
+    flex: 1 1 auto;
+  }
+
+  .board-container {
     width: max-content;
     height: max-content;
+    margin: auto;
   }
 
   .row {
@@ -87,11 +142,15 @@
 
   .cell {
     background: #333;
-    /* border: solid 1px black; */
     display: inline-block;
   }
 
   .active {
     background: white;
+  }
+
+  .disabled {
+    background: darkgray;
+    color: gray;
   }
 </style>
