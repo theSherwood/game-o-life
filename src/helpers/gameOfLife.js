@@ -56,3 +56,10 @@ const handleLiveCell = (i, j, board) => {
   }
   return 0;
 };
+
+export const randomSeed = board => {
+  const newBoard = board.map((row, i) =>
+    row.map((cell, j) => (Math.random() < 0.5 ? 0 : 1))
+  );
+  return newBoard;
+};
