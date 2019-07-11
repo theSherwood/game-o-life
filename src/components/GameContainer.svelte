@@ -3,20 +3,28 @@
   export let y = 100;
   export let cellSize = 8;
 
-  const board = new Array(y).fill(new Array(x).fill(0));
+  let board = new Array(y).fill(0)
+  board = board.map(val => {
+    return new Array(x).fill(0)
+  })
 
+  function handleClick(i, j) {
+    board[i][j] = board[i][j] === 0 ? 1 : 0;
+    board = board;
+  }
 </script>
 
 <section class="game-container">
   {#each board as row, i}
     <div class="row" style={`height: ${cellSize}px;`}>
       {#each row as cell, j}
-        <div class="cell" style={`width: ${cellSize}px; height: ${cellSize}px;`}></div>
+        <div class="cell" class:active="{cell === 1}" style={`width: ${cellSize}px; height: ${cellSize}px;`} on:click="{() => handleClick(i, j)}"></div>
       {/each}
     </div>
   {/each}
-
 </section>
+<button>Run</button>
+<button>Pause</button>
 
 <style>
   .game-container :global(*) {
@@ -38,5 +46,9 @@
     background: #333;
     border: solid 1px black;
     display: inline-block;
+  }
+
+  .active {
+    background: white;
   }
 </style>
